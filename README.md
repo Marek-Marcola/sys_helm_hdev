@@ -8,7 +8,7 @@ Install
 Install:
 
     ./hdev.sh --install
-
+    -- or --
     cp -fv hdev.env /usr/local/etc
     cp -fv hdev.sh /usr/local/bin
 
