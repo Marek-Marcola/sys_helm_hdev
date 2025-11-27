@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION_BIN="202509180061"
+VERSION_BIN="202511270061"
 
 ID="[${0##*/}]"
 
@@ -11,8 +11,7 @@ HELP=0
 declare -a ARGS1
 ARGS2=""
 
-while [ $# -gt 0 ]
-do
+while [ $# -gt 0 ]; do
   case $1 in
     --inst*|-inst*)
       INSTALL=1
@@ -38,6 +37,9 @@ do
   esac
 done
 
+#
+# stage: HELP
+#
 if [ $HELP -eq 1 ]; then
   echo "$(basename $0) -install   # install"
   echo "$(basename $0) -version   # version"
