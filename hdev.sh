@@ -1,8 +1,9 @@
 #!/bin/bash
 
-VERSION_BIN="202511270061"
+VERSION_BIN="202512070061"
 
-ID="[${0##*/}]"
+SN="${0##*/}"
+ID="[$SN]"
 
 INSTALL=0
 VERSION=0
@@ -41,8 +42,8 @@ done
 # stage: HELP
 #
 if [ $HELP -eq 1 ]; then
-  echo "$(basename $0) -install   # install"
-  echo "$(basename $0) -version   # version"
+  echo "$SN -install   # install"
+  echo "$SN -version   # version"
   exit 0
 fi
 
