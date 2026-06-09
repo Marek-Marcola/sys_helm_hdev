@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION_BIN="260504"
+VERSION_BIN="260609"
 
 SN="${0##*/}"
 ID="[$SN]"
@@ -9,6 +9,7 @@ INSTALL_RSYNC=0
 INSTALL_ANPB=0
 INSTALL_ANPB_HP="hdev"
 VERSION=0
+STAGE_LIST=0
 EVAL=0
 HELP=0
 
@@ -16,6 +17,8 @@ declare -a ARGS1
 ARGS2=""
 
 s=0
+
+: ${COMM:=$(readlink -f ${BASH_SOURCE})}
 
 while [ $# -gt 0 ]; do
   case $1 in
@@ -30,6 +33,10 @@ while [ $# -gt 0 ]; do
     --anpb|-anpb)
       INSTALL_ANPB=1
       [[ -n "$2" && ${2:0:1} != "-" ]] && INSTALL_ANPB_HP="$2" && shift
+      shift
+      ;;
+    --stage|-stage)
+      STAGE_LIST=1
       shift
       ;;
     -x)
@@ -59,6 +66,7 @@ if [ $HELP -eq 1 ]; then
   echo "$SN -version                  # version"
   echo "$SN -install                  # install with rsync"
   echo "$SN -anpb [host_pattern] [-x] # install with ansible"
+  echo "$SN -stage                    # stage list"
   exit 0
 fi
 
@@ -123,5 +131,13 @@ if [ $INSTALL_ANPB -eq 1 ]; then
   anpb hdev_install.yml -e h=$INSTALL_ANPB_HP $EVAL_OPT
   { set +ex; } 2>/dev/null
 
+  exit 0
+fi
+
+#
+# stage: STAGE-LIST
+#
+if [ $STAGE_LIST -eq 1 ]; then
+  cat $COMM | grep '^#' | grep 'stage:'
   exit 0
 fi
