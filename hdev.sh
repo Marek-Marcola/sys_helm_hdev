@@ -1,15 +1,18 @@
 #!/bin/bash
 
-VERSION_BIN="260609"
+VERSION_BIN="260622"
 
 SN="${0##*/}"
 ID="[$SN]"
+
+SDIR="/dep/c"
 
 INSTALL_RSYNC=0
 INSTALL_ANPB=0
 INSTALL_ANPB_HP="hdev"
 VERSION=0
 STAGE_LIST=0
+SLIST=0
 EVAL=0
 HELP=0
 
@@ -43,6 +46,11 @@ while [ $# -gt 0 ]; do
       EVAL=1
       shift
       ;;
+    -ls)
+      QUIET=1
+      SLIST=1
+      shift
+      ;;
     -h|-help|--help)
       HELP=1
       shift
@@ -67,6 +75,7 @@ if [ $HELP -eq 1 ]; then
   echo "$SN -install                  # install with rsync"
   echo "$SN -anpb [host_pattern] [-x] # install with ansible"
   echo "$SN -stage                    # stage list"
+  echo "$SN -ls                       # spooler list"
   exit 0
 fi
 
@@ -140,4 +149,22 @@ fi
 if [ $STAGE_LIST -eq 1 ]; then
   cat $COMM | grep '^#' | grep 'stage:'
   exit 0
+fi
+
+#
+# stage: SPOOLER-LIST
+#
+if [ $SLIST -ne 0 ]; then
+  (( $s != 0 )) && echo; ((++s))
+  echo "$ID: stage: SPOOLER-LIST"
+
+  if [ ! -d $SDIR ]; then
+    echo "$ID: error: no spooler dir: $SDIR"
+    exit 1
+  fi
+
+  set -ex
+  cd $SDIR
+  tree --noreport -F -h -C -L 1 -f $SDIR
+  { set +ex; } 2>/dev/null
 fi
