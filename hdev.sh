@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION_BIN="260622"
+VERSION_BIN="260623"
 
 SN="${0##*/}"
 ID="[$SN]"
@@ -13,6 +13,8 @@ INSTALL_ANPB_HP="hdev"
 VERSION=0
 STAGE_LIST=0
 SLIST=0
+SLOAD=0
+ARCH=0
 EVAL=0
 HELP=0
 
@@ -46,9 +48,24 @@ while [ $# -gt 0 ]; do
       EVAL=1
       shift
       ;;
+    -cl)
+      SLOAD=1
+      SDIR="$2"
+      shift; shift
+      ;;
     -ls)
       QUIET=1
       SLIST=1
+      shift
+      ;;
+    -la)
+      QUIET=1
+      SLOAD=1
+      ARCH=1
+      shift
+      ;;
+    -A)
+      ARCH=1
       shift
       ;;
     -h|-help|--help)
@@ -75,7 +92,12 @@ if [ $HELP -eq 1 ]; then
   echo "$SN -install                  # install with rsync"
   echo "$SN -anpb [host_pattern] [-x] # install with ansible"
   echo "$SN -stage                    # stage list"
+  echo ""
+  echo "$SN -cl dir [-A]              # chart load (all from dir), archive"
   echo "$SN -ls                       # spooler list"
+  echo "$SN -la                       # spooler load/archive"
+  echo ""
+  echo "$SN                           # info"
   exit 0
 fi
 
@@ -167,4 +189,40 @@ if [ $SLIST -ne 0 ]; then
   cd $SDIR
   tree --noreport -F -h -C -L 1 -f $SDIR
   { set +ex; } 2>/dev/null
+fi
+
+#
+# stage: SPOOLER-LOAD
+#
+if [ $SLOAD -ne 0 ]; then
+  (( $s != 0 )) && echo; ((++s))
+  echo "$ID: stage: SPOOLER-LOAD"
+
+  if [ ! -f "$SDIR" -a ! -d "$SDIR" ]; then
+    echo "$ID: error: access: $SDIR"
+    exit 1
+  fi
+
+  set -ex
+  cd $SDIR
+  tree --noreport -F -h -C -L 1 -f $SDIR
+  { set +ex; } 2>/dev/null
+  echo
+
+  ls *.tgz 2>/dev/null | sort | \
+  while read C; do
+    for r in $CM_HOST; do
+      set -ex
+      curl -sk --netrc-file $CM_AUTH --data-binary "@$C" $r/api/charts?force | jq
+      { set +ex; } 2>/dev/null
+    done
+    if [ $ARCH -ne 0 ]; then
+      if [ -d archive ]; then
+        echo
+        set -ex
+        mv -fv $C archive/
+        { set +ex; } 2>/dev/null
+      fi
+    fi
+  done
 fi
