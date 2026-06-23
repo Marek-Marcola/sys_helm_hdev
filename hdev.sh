@@ -180,7 +180,7 @@ if [ $SLIST -ne 0 ]; then
   (( $s != 0 )) && echo; ((++s))
   echo "$ID: stage: SPOOLER-LIST"
 
-  if [ ! -d $SDIR ]; then
+  if [ ! -d "$SDIR" ]; then
     echo "$ID: error: no spooler dir: $SDIR"
     exit 1
   fi
@@ -200,6 +200,11 @@ if [ $SLOAD -ne 0 ]; then
 
   if [ ! -f "$SDIR" -a ! -d "$SDIR" ]; then
     echo "$ID: error: access: $SDIR"
+    exit 1
+  fi
+
+  if [ -z "$CM_HOST" ]; then
+    echo error: require CM_HOST
     exit 1
   fi
 
