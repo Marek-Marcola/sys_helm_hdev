@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION_BIN="260623"
+VERSION_BIN="260707"
 
 SN="${0##*/}"
 ID="[$SN]"
@@ -122,23 +122,28 @@ if [ $INSTALL_RSYNC -eq 1 ]; then
   (( $s != 0 )) && echo; ((++s))
   echo "$ID: stage: INSTALL-RSYNC"
 
-  if [ -f hdev.env ]; then
+  [[ $EVAL -ne 1 ]] && EVAL_OPT="-n" || EVAL_OPT=""
+
+  if [ -f hdev.sh ]; then
     for d in /usr/local/etc /pub/pkb/kb/data/999220-hdev/999220-000020_hdev_script /pub/pkb/pb/playbooks/999220-hdev/files; do
       if [ -d $d ]; then
         set -ex
-        rsync -ai hdev.env $d
+        rsync -ai $EVAL_OPT hdev.env $d
         { set +ex; } 2>/dev/null
       fi
     done
-  fi
-  if [ -f hdev.sh ]; then
     for d in /usr/local/bin /pub/pkb/kb/data/999220-hdev/999220-000020_hdev_script /pub/pkb/pb/playbooks/999220-hdev/files; do
       if [ -d $d ]; then
         set -ex
-        rsync -ai hdev.sh $d
+        rsync -ai $EVAL_OPT hdev.sh $d
         { set +ex; } 2>/dev/null
       fi
     done
+  elif [ -f /pub/pkb/pb/playbooks/999220-hdev/files/hdev.sh ]; then
+    set -ex
+    rsync -ai $EVAL_OPT /pub/pkb/pb/playbooks/999220-hdev/files/hdev.sh /usr/local/bin/
+    rsync -ai $EVAL_OPT /pub/pkb/pb/playbooks/999220-hdev/files/hdev.env /usr/local/bin/
+    { set +ex; } 2>/dev/null
   fi
 
   exit 0
@@ -187,7 +192,7 @@ if [ $SLIST -ne 0 ]; then
 
   set -ex
   cd $SDIR
-  tree --noreport -F -h -C -L 1 -f $SDIR
+  tree --noreport -F -C -L 1 -f $SDIR
   { set +ex; } 2>/dev/null
 fi
 
