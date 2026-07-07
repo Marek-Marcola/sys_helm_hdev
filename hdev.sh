@@ -27,7 +27,7 @@ s=0
 
 while [ $# -gt 0 ]; do
   case $1 in
-    --vers*|-vers*)
+    --ver*|-ver*)
       VERSION=1
       shift
       ;;
@@ -88,12 +88,13 @@ done
 # stage: HELP
 #
 if [ $HELP -eq 1 ]; then
-  echo "$SN -version                  # version"
-  echo "$SN -install                  # install with rsync"
+  echo "$SN -ver                      # version"
+  echo "$SN -inst [-x]                # install with rsync"
   echo "$SN -anpb [host_pattern] [-x] # install with ansible"
   echo "$SN -stage                    # stage list"
   echo ""
   echo "$SN -cl dir [-A]              # chart load (all from dir), archive"
+  echo ""
   echo "$SN -ls                       # spooler list"
   echo "$SN -la                       # spooler load/archive"
   echo ""
