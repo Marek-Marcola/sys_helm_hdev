@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION_BIN="260707"
+VERSION_BIN="260715"
 
 SN="${0##*/}"
 ID="[$SN]"
@@ -143,7 +143,7 @@ if [ $INSTALL_RSYNC -eq 1 ]; then
   elif [ -f /pub/pkb/pb/playbooks/999220-hdev/files/hdev.sh ]; then
     set -ex
     rsync -ai $EVAL_OPT /pub/pkb/pb/playbooks/999220-hdev/files/hdev.sh /usr/local/bin/
-    rsync -ai $EVAL_OPT /pub/pkb/pb/playbooks/999220-hdev/files/hdev.env /usr/local/bin/
+    rsync -ai $EVAL_OPT /pub/pkb/pb/playbooks/999220-hdev/files/hdev.env /usr/local/etc/
     { set +ex; } 2>/dev/null
   fi
 
