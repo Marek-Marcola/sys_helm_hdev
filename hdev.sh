@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION_BIN="260720"
+VERSION_BIN="260807"
 
 SN="${0##*/}"
 ID="[$SN]"
@@ -109,7 +109,7 @@ fi
 #
 if [ $VERSION -eq 1 ]; then
   echo "${0##*/}  $VERSION_BIN"
-  [[ "$VERSION_ENV" != "" ]] && echo "cdev.env $VERSION_ENV"
+  [[ "$VERSION_ENV" != "" ]] && echo "hdev.env $VERSION_ENV"
   if [ $(type -t helm) ]; then
     set -ex
     helm version
