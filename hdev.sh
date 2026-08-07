@@ -12,6 +12,9 @@ INSTALL_ANPB=0
 INSTALL_ANPB_HP="hdev"
 VERSION=0
 STAGE_LIST=0
+CHART_PACKAGE=0
+CHART_UPLOAD=0
+CHART_VERS=""
 SLIST=0
 SLOAD=0
 ARCH=0
@@ -46,6 +49,21 @@ while [ $# -gt 0 ]; do
       ;;
     -x)
       EVAL=1
+      shift
+      ;;
+    -cp)
+      CHART_PACKAGE=1
+      [[ -n "$2" && ${2:0:1} != "-" ]] && CHART_VERS="$2" && shift
+      shift
+      ;;
+    -cu)
+      CHART_UPLOAD=1
+      shift
+      ;;
+    -cpu)
+      CHART_PACKAGE=1
+      [[ -n "$2" && ${2:0:1} != "-" ]] && CHART_VERS="$2" && shift
+      CHART_UPLOAD=1
       shift
       ;;
     -cl)
@@ -95,7 +113,11 @@ if [ $HELP -eq 1 ]; then
   echo "$SN -anpb [host_pattern] [-x] # install with ansible"
   echo "$SN -stage                    # stage list"
   echo ""
+  echo "$SN -cp [ver,...|all]         # chart package"
+  echo "$SN -cu                       # chart upload"
   echo "$SN -cl dir [-A]              # chart load (all from dir), archive"
+  echo ""
+  echo "$SN -cpu [ver,...|all]        # alias: -cp [ver,...|all] -cu"
   echo ""
   echo "$SN -ls                       # spooler list"
   echo "$SN -la                       # spooler load/archive"
@@ -179,6 +201,48 @@ fi
 if [ $STAGE_LIST -eq 1 ]; then
   cat $COMM | grep '^#' | grep 'stage:'
   exit 0
+fi
+
+#
+# stage: CHART-PACKAGE
+#
+if [ $CHART_PACKAGE -ne 0 ]; then
+  (( $s != 0 )) && echo; ((++s))
+  echo "$ID: stage: CHART-PACKAGE"
+
+  C=$(cat Chart.yaml 2>/dev/null|col -b|grep name:|awk '{print $2}')
+
+  if [ -f .hdev.env ]; then
+    E=.hdev.env
+  elif [ -f $HOME/.hdev.env ]; then
+    E=$HOME/.hdev.env
+  else
+    E=/usr/local/etc/hdev.env
+  fi
+
+  if [ "$CHART_VERS" = "" ]; then
+    V=$(cat $E 2>/dev/null|sed -e :a -e '$!N;s/\n  */ /;ta' -e 'P;D'|grep ^${C}:|sed 's/^.*://'|awk '{print $1}')
+  elif [ "$CHART_VERS" = "all" ]; then
+    V=$(cat $E 2>/dev/null|sed -e :a -e '$!N;s/\n  */ /;ta' -e 'P;D'|grep ^${C}:|sed 's/^.*://')
+  else
+    V=$(echo $CHART_VERS|sed 's/,/ /g')
+  fi
+
+  for i in $V; do
+    echo
+    set -ex
+    helm package . -d ../zout --version $i --app-version $i
+    { set +ex; } 2>/dev/null
+
+    if [ $CHART_UPLOAD -ne 0 ]; then
+      echo
+      for r in $CM_HOST; do
+        set -ex
+        curl -sk --netrc-file $CM_AUTH --data-binary "@../zout/$C-$i.tgz" $r/api/charts?force | jq
+        { set +ex; } 2>/dev/null
+      done
+    fi
+  done
 fi
 
 #
