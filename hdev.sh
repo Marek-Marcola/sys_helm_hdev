@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION_BIN="260807"
+VERSION_BIN="260814"
 
 SN="${0##*/}"
 ID="[$SN]"
@@ -295,11 +295,11 @@ if [ $SLOAD -ne 0 ]; then
     done
     if [ $ARCH -ne 0 ]; then
       if [ -d archive ]; then
-        echo
         set -ex
         mv -fv $C archive/
         { set +ex; } 2>/dev/null
       fi
     fi
+    echo
   done
 fi
