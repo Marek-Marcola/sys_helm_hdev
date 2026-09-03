@@ -7,17 +7,17 @@ Install
 -------
 Install:
 
-    hdev.sh --inst -x
+    hdev.sh -inst -x
     -- or --
-    hdev.sh --anpb -x
+    hdev.sh -anpb -x
     -- or --
     cp -fv hdev.env /usr/local/etc
     cp -fv hdev.sh /usr/local/bin
 
 Verify:
 
-    hdev.sh --ver
+    hdev.sh -ver
 
 Help:
 
-    hdev.sh --help
+    hdev.sh -h
