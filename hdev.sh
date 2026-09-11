@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION_BIN="260831"
+VERSION_BIN="260911"
 
 SN="${0##*/}"
 ID="[$SN]"
@@ -186,7 +186,7 @@ if [ $INSTALL_ANPB -eq 1 ]; then
   echo "$ID: stage: INSTALL-ANPB (EVAL=$EVAL HP=$INSTALL_ANPB_HP)"
 
   if [ ! $(type -t anpb) ]; then
-    echo "$ID: error: command not found: anpb"
+    echo "$ID: E: command not found: anpb"
     exit 1
   fi
 
@@ -257,7 +257,7 @@ if [ $SLIST -ne 0 ]; then
   echo "$ID: stage: SPOOLER-LIST"
 
   if [ ! -d "$SDIR" ]; then
-    echo "$ID: error: no spooler dir: $SDIR"
+    echo "$ID: E: no spooler dir: $SDIR"
     exit 1
   fi
 
@@ -275,12 +275,12 @@ if [ $SLOAD -ne 0 ]; then
   echo "$ID: stage: SPOOLER-LOAD"
 
   if [ ! -f "$SDIR" -a ! -d "$SDIR" ]; then
-    echo "$ID: error: access: $SDIR"
+    echo "$ID: E: access: $SDIR"
     exit 1
   fi
 
   if [ -z "$CM_HOST" ]; then
-    echo error: require CM_HOST
+    echo "$ID: E: require: CM_HOST"
     exit 1
   fi
 
