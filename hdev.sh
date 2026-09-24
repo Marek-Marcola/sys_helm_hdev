@@ -21,6 +21,7 @@ SLOAD=0
 ARCH=0
 EVAL=0
 HELP=0
+QUIET=0
 
 declare -a ARGS1
 ARGS2=""
@@ -205,6 +206,17 @@ fi
 if [ $STAGE_LIST -eq 1 ]; then
   cat $COMM | grep '^#' | grep 'stage:'
   exit 0
+fi
+
+#
+# stage: INFO
+#
+if [ $QUIET -eq 0 ]; then
+  (( $s != 0 )) && echo; ((++s))
+  echo "$ID: stage: INFO"
+
+  echo "cwd        = $(pwd -P)"
+  echo "chart_vers = ${CHART_VERS:-[none]}"
 fi
 
 #
