@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION_BIN="260911"
+VERSION_BIN="260924"
 
 SN="${0##*/}"
 ID="[$SN]"
@@ -252,11 +252,15 @@ if [ $CHART_PACKAGE -ne 0 ]; then
 
     if [ $CHART_UPLOAD -ne 0 ]; then
       echo
-      for r in $CM_HOST; do
-        set -ex
-        curl -sk --netrc-file $CM_AUTH --data-binary "@../zout/$C-$i.tgz" $r/api/charts?force | jq
-        { set +ex; } 2>/dev/null
-      done
+      if [ -n "$CM_HOST" ]; then
+        for r in $CM_HOST; do
+          set -ex
+          curl -sk --netrc-file $CM_AUTH --data-binary "@../zout/$C-$i.tgz" $r/api/charts?force | jq
+          { set +ex; } 2>/dev/null
+        done
+      else
+        echo "I: unable to upload: empty var CM_HOST"
+      fi
     fi
   done
 fi
