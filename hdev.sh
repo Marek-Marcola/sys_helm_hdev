@@ -1,9 +1,9 @@
 #!/bin/bash
 
-VERSION_BIN="260924"
+VERSION_BIN="261010"
 
 SN="${0##*/}"
-ID="[$SN]"
+ID="[${SN%.sh}]"
 
 SDIR="/dep/c"
 
