@@ -1,14 +1,14 @@
 #!/bin/bash
 
-VERSION_BIN="261015"
+VERSION_BIN="261021"
 
 SN="${0##*/}"
 ID="[${SN%.sh}]"
 
 SDIR="/dep/c"
 
-ARCH=0
-ARCH_DIR="/tmp"
+ARCHIVE=0
+ARCHIVE_DIR="/tmp"
 INSTALL_RSYNC=0
 INSTALL_RSYNC_HL="$(hostname -s)"
 INSTALL_ANPB=0
@@ -39,8 +39,8 @@ while [ $# -gt 0 ]; do
       shift
       ;;
     --arch*|-arch*)
-      ARCH=1
-      [[ -n "$2" && ${2:0:1} != "-" ]] && ARCH_DIR="$2" && shift
+      ARCHIVE=1
+      [[ -n "$2" && ${2:0:1} != "-" ]] && ARCHIVE_DIR="$2" && shift
       shift
       ;;
     --inst*|-inst*)
@@ -152,14 +152,14 @@ if [ $VERSION -eq 1 ]; then
 fi
 
 #
-# stage: ARCH
+# stage: ARCHIVE
 #
-if [ $ARCH -eq 1 ]; then
+if [ $ARCHIVE -eq 1 ]; then
   (( $s != 0 )) && echo; ((++s))
-  echo "$ID: stage: ARCH (DIR=$ARCH_DIR)"
+  echo "$ID: stage: ARCHIVE (DIR=$ARCHIVE_DIR)"
 
-  if [ ! -d "$ARCH_DIR" ]; then
-    echo "$ID: E: arch dir not found: $ARCH_DIR"
+  if [ ! -d "$ARCHIVE_DIR" ]; then
+    echo "$ID: E: arch dir not found: $ARCHIVE_DIR"
     exit 1
   fi
 
@@ -169,7 +169,7 @@ if [ $ARCH -eq 1 ]; then
   fi
 
   D=hdev-$(date "+%y%m%d%H%M")
-  F=$ARCH_DIR/$D.tar
+  F=$ARCHIVE_DIR/$D.tar
 
   set -x
   tar cf $F --transform "s|^|$D/|" LICENSE README* *.sh *.env
