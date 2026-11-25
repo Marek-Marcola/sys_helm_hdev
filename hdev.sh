@@ -1,6 +1,8 @@
 #!/bin/bash
+#
+# Helm chart development tools.
 
-VERSION_BIN="261021"
+VERSION_BIN="261125"
 
 SN="${0##*/}"
 ID="[${SN%.sh}]"
